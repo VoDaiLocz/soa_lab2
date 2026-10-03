@@ -1,0 +1,99 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SOA Lab 2 - Router, Middleware & Bảo mật JWT RESTful API",
+    "version": "1.0.0",
+    "description": "API dịch vụ đăng nhập, sinh JWT, lưu token CSDL và Middleware xác thực cho API Hello World."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Máy chủ cục bộ"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Nhập JWT token được cấp từ API /login"
+      }
+    }
+  },
+  "paths": {
+    "/login": {
+      "post": {
+        "summary": "Dịch vụ đăng nhập & sinh JWT",
+        "description": "Kiểm tra tài khoản, mật khẩu (hỗ trợ plain, md5, base64) và sinh token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userName", "password"],
+                "properties": {
+                  "userName": {
+                    "type": "string",
+                    "example": "admin"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "admin123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đăng nhập thành công, trả về token"
+          },
+          "401": {
+            "description": "Sai tài khoản hoặc mật khẩu"
+          }
+        }
+      }
+    },
+    "/auth": {
+      "get": {
+        "summary": "API xác thực token",
+        "description": "Xác thực token thông qua header Authorization Bearer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token hợp lệ"
+          },
+          "401": {
+            "description": "Token không hợp lệ hoặc thiếu token"
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "API Hello World từ Lab 1 (được bảo vệ bởi JWT Middleware)",
+        "description": "Chỉ những yêu cầu có JWT token hợp lệ mới nhận được chuỗi Hello World",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trả về Hello World thành công"
+          },
+          "401": {
+            "description": "Chưa xác thực token"
+          }
+        }
+      }
+    }
+  }
+}
