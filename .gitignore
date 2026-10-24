@@ -1,5 +1,8 @@
-node_modules/
-*.log
-*.db
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.idea/
+*.iml
+.classpath
+.project
+.settings/
 .DS_Store
-.env
